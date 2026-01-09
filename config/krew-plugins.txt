@@ -1,0 +1,26 @@
+# kubectl plugins installed by install.sh through krew (https://krew.sigs.k8s.io/plugins/).
+# Used as `kubectl <plugin>` (or `k <plugin>`). Update them all: kubectl krew upgrade
+
+# Context / namespace
+ctx                 # switch context (kubectx)
+ns                  # switch namespace (kubens)
+
+# Operators / storage
+cnpg                # CloudNativePG: cluster status, promote, backup, psql...
+rook-ceph           # Rook: ceph status, OSD/mon maintenance
+pv-migrate          # copy data between PVCs, across namespaces or clusters
+df-pv               # disk usage of persistent volumes
+
+# Day-to-day
+neat                # strip managedFields/status noise: k get deploy x -o yaml | k neat
+view-secret         # decode secrets: k view-secret my-secret [key]
+stern               # tail logs of many pods at once: k stern app=api
+tree                # ownership tree: k tree deploy my-app
+get-all             # really everything in a namespace
+node-shell          # root shell on a node (no SSH needed)
+explore             # fuzzy `kubectl explain`
+
+# Capacity / audit
+resource-capacity   # requests/limits/usage per node: k resource-capacity --util
+rbac-tool           # who can do what, generate policies: k rbac-tool who-can get secrets
+blame               # which manager/user changed which field

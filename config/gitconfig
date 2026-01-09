@@ -1,0 +1,23 @@
+# Shared git settings — included from ~/.gitconfig by install.sh ([include] path = ...).
+# Identity (user.name / user.email) stays in ~/.gitconfig, out of this public repo.
+
+[core]
+	editor = vim
+
+[diff]
+	tool = vimdiff
+
+[difftool]
+	prompt = false
+
+[merge]
+	tool = vimdiff
+	conflictstyle = zdiff3
+
+[mergetool]
+	prompt = false
+	keepBackup = false
+
+[mergetool "vimdiff"]
+	# 4 panes: LOCAL | BASE | REMOTE on top, MERGED below
+	layout = "LOCAL,BASE,REMOTE / MERGED"

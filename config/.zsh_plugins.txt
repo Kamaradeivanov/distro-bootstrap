@@ -1,0 +1,7 @@
+# zsh plugins, loaded by antidote (https://antidote.sh) — symlinked to ~/.zsh_plugins.txt.
+# Order matters: fzf-tab after compinit (done in .zshrc), highlighting last.
+# After editing, open a new shell: antidote regenerates ~/.zsh_plugins.zsh automatically.
+
+Aloxaf/fzf-tab
+zsh-users/zsh-autosuggestions
+zdharma-continuum/fast-syntax-highlighting

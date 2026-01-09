@@ -1,0 +1,24 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+# Prompt config — symlinked to ~/.config/starship.toml. Docs: https://starship.rs/config/
+# Symbols chosen to render without a Nerd Font.
+
+command_timeout = 1000
+
+[kubernetes]
+disabled = false
+format = '[⎈ $context( \($namespace\))]($style) '
+contexts = [
+  # gke_<project>_<zone>_<cluster> → <cluster>
+  { context_pattern = "gke_.*_(?P<cluster>[\\w-]+)", context_alias = "$cluster" },
+]
+
+[gcloud]
+# Show the active project only, not the account e-mail
+format = '[$symbol$project]($style) '
+symbol = "☁️ "
+
+[nodejs]
+symbol = "[⬢](bold green) "
+
+[cmd_duration]
+min_time = 3_000
