@@ -22,12 +22,12 @@ if [ ! -d "$HOME/.oh-my-zsh" ]; then
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
-# Install asdf version 0.18.0 if not install
-# Check if version 0.18.0 is already install
-if ! asdf --version | grep -q "0.18.0"; then
-  wget https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz
+# Install asdf version 0.19.0 if not install
+# Check if version 0.19.0 is already install
+if ! asdf --version | grep -q "0.19.0"; then
+  wget https://github.com/asdf-vm/asdf/releases/download/v0.19.0/asdf-v0.19.0-linux-amd64.tar.gz
   mkdir -p ${HOME}/.local/bin
-  tar -xvzf asdf-v0.18.0-linux-amd64.tar.gz -C ${HOME}/.local/bin
+  tar -xvzf asdf-v0.19.0-linux-amd64.tar.gz -C ${HOME}/.local/bin
   chmod +x ${HOME}/.local/bin/asdf
   mkdir -p "${ASDF_DATA_DIR:-$HOME/.asdf}/completions"
   export PATH="$HOME/.local/bin:$PATH"
