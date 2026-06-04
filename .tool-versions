@@ -15,4 +15,3 @@ sops 3.11.0
 terraform-docs 0.24.0
 terragrunt 1.0.7
 tflint 0.60.0
-werf 2.57.1
