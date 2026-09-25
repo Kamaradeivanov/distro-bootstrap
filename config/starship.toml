@@ -4,6 +4,10 @@
 
 command_timeout = 1000
 
+# Right side: duration of the last command (if > 2s) and the time the prompt appeared,
+# i.e. when the previous command finished.
+right_format = '$cmd_duration$time'
+
 [kubernetes]
 disabled = false
 format = '[⎈ $context( \($namespace\))]($style) '
@@ -14,11 +18,17 @@ contexts = [
 
 [gcloud]
 # Show the active project only, not the account e-mail
-format = '[$symbol$project]($style) '
-symbol = "☁️ "
+format = '([☁️ $project]($style) )'
 
 [nodejs]
 symbol = "[⬢](bold green) "
 
 [cmd_duration]
-min_time = 3_000
+min_time = 2_000
+format = '[⏱ $duration]($style) '
+
+[time]
+disabled = false
+time_format = '%H:%M:%S'
+format = '[$time]($style)'
+style = 'dimmed white'

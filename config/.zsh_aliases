@@ -7,6 +7,7 @@ alias la='ls -lAh'
 alias grep='grep --color=auto'
 alias docker='podman'
 alias egpg='export GPG_TTY=$(tty)'
+alias hist='history -iD'   # history with start time and duration of each command
 alias watch='watch '
 alias zshconfig='${EDITOR:-nano} ~/.zshrc'
 
