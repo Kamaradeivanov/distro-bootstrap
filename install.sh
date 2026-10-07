@@ -59,6 +59,7 @@ link() {
   echo "  $dst -> $src"
 }
 log "Linking dotfiles"
+link config/.zshenv       "$HOME/.zshenv"
 link config/.zshrc        "$HOME/.zshrc"
 link config/.zsh_aliases  "$HOME/.zsh_aliases"
 link config/.zsh_plugins.txt "$HOME/.zsh_plugins.txt"

@@ -64,6 +64,12 @@ _zcomp_cache argocd   argocd completion zsh
 _zcomp_cache k9s      k9s completion zsh
 _zcomp_cache mise     mise completion zsh
 _zcomp_cache podman   podman completion zsh
+_zcomp_cache cilium   cilium completion zsh
+_zcomp_cache yq       yq shell-completion zsh
+_zcomp_cache sops     sops completion zsh
+_zcomp_cache starship starship completions zsh
+_zcomp_cache pnpm     pnpm completion zsh
+(( $+commands[rustup] )) && _zcomp_cache cargo rustup completions zsh cargo
 unfunction _zcomp_cache
 
 # Full compinit when a completion changed or once a day; otherwise reuse the dump (fast path).
@@ -86,6 +92,12 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1 --color=always $realpath'
 # tofu completes through bash-style `complete -C`
 autoload -U +X bashcompinit && bashcompinit
 (( $+commands[tofu] )) && complete -o nospace -C "${commands[tofu]}" tofu
+
+# kubecolor is a kubectl drop-in: reuse its completion (its own emits "#compdef kubectl")
+(( $+commands[kubecolor] )) && compdef kubecolor=kubectl
+
+# gcloud ships its own zsh completion script
+(( $+commands[gcloud] )) && gcloud_inc="$(mise where gcloud 2>/dev/null)/completion.zsh.inc" && [[ -r $gcloud_inc ]] && source "$gcloud_inc"; unset gcloud_inc
 
 # scw: same as `scw autocomplete script`, minus its extra compinit and absolute-path compdef
 _scw() {
