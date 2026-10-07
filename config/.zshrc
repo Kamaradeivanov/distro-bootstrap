@@ -124,3 +124,7 @@ fi
 ### Prompt ###
 
 (( $+commands[starship] )) && eval "$(starship init zsh)"
+
+### Machine-local overrides (not in the repo) ###
+
+[[ -r ~/.zshrc.local ]] && source ~/.zshrc.local
