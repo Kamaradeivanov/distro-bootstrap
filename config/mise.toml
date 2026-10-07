@@ -23,6 +23,7 @@ gcloud = "586.0.0"
 scaleway = "2.62.0"
 glab = "1.119.0"
 gh = "2.101.0"
+mc = "RELEASE.2025-08-13T08-35-41Z" # MinIO client (S3-compatible object storage)
 
 # Shell
 starship = "1.26.0"
