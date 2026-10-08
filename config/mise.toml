@@ -11,6 +11,12 @@ krew = "0.5.0"
 kubecolor = "0.8.0"
 cilium-cli = "0.20.1"
 argocd = "3.5.3"
+istioctl = "1.31.1"            # match the istio control plane version of your clusters
+velero = "1.18.3"              # keep in line with the velero server version
+
+# Registries / images
+crane = "0.22.1"               # google/go-containerregistry (not the krew `crane` plugin)
+regctl = "0.11.6"
 
 # IaC
 opentofu = "1.12.6"
@@ -23,7 +29,7 @@ gcloud = "586.0.0"
 scaleway = "2.62.0"
 glab = "1.119.0"
 gh = "2.101.0"
-mc = "RELEASE.2025-08-13T08-35-41Z" # MinIO client (S3-compatible object storage)
+mc = "RELEASE.2025-08-13T08-35-41Z"  # MinIO client (not the krew `mc` plugin)
 
 # Shell
 starship = "1.26.0"
