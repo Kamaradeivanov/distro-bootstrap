@@ -126,13 +126,24 @@ fi
 source ~/.zsh_aliases
 
 ### SSH Agent ###
-# Load every private key in ~/.ssh that has a matching .pub.
-
-if (( $+commands[keychain] )); then
+# 1) agent gcr de la session : socket sous $XDG_RUNTIME_DIR, recree a chaque login
+# 2) sinon keychain, avec garde-fou si son cache pointe sur un socket disparu
+_gcr_sock="${XDG_RUNTIME_DIR:-/run/user/$UID}/gcr/ssh"
+if [[ -S $_gcr_sock ]]; then
+  export SSH_AUTH_SOCK=$_gcr_sock
+elif (( $+commands[keychain] )); then
   ssh_keys=(~/.ssh/*.pub(N:r))
-  (( ${#ssh_keys} )) && eval "$(keychain --eval --quiet $ssh_keys)"
+  if (( ${#ssh_keys} )); then
+    eval "$(keychain --eval --quiet $ssh_keys)"
+    if [[ ! -S ${SSH_AUTH_SOCK:-} ]]; then
+      keychain --stop all >/dev/null 2>&1
+      rm -f ~/.keychain/${HOST}-{sh,csh,fish}
+      eval "$(keychain --eval --quiet $ssh_keys)"
+    fi
+  fi
   unset ssh_keys
 fi
+unset _gcr_sock
 
 ### Prompt ###
 
