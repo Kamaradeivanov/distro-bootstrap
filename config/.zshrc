@@ -63,6 +63,7 @@ _zcomp_cache glab     glab completion -s zsh
 _zcomp_cache argocd   argocd completion zsh
 _zcomp_cache k9s      k9s completion zsh
 _zcomp_cache mise     mise completion zsh
+_zcomp_cache docker   docker completion zsh
 _zcomp_cache podman   podman completion zsh
 _zcomp_cache cilium   cilium completion zsh
 _zcomp_cache yq       yq shell-completion zsh

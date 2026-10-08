@@ -5,7 +5,7 @@ alias l='ls -lah'
 alias ll='ls -lh'
 alias la='ls -lAh'
 alias grep='grep --color=auto'
-alias docker='podman'
+(( ! $+commands[docker] && $+commands[podman] )) && alias docker='podman'
 alias egpg='export GPG_TTY=$(tty)'
 alias hist='history -iD'   # history with start time and duration of each command
 alias watch='watch '
@@ -107,7 +107,7 @@ alias gr='git remote'
 alias grv='git remote --verbose'
 alias gcl='git clone --recurse-submodules'
 
-alias gitlab-runner-local='docker run --rm -it -v "$PWD":"$PWD" --workdir "$PWD" -v /var/run/docker.sock:/var/run/docker.sock gitlab/gitlab-runner exec docker --docker-privileged --docker-pull-policy="always" --docker-volumes /var/run/docker.sock:/var/run/docker.sock'
+alias gitlab-runner-local='docker run --rm -it -v "$PWD":"$PWD" --workdir "$PWD" -v "${${DOCKER_HOST#unix://}:-/var/run/docker.sock}":/var/run/docker.sock gitlab/gitlab-runner exec docker --docker-privileged --docker-pull-policy="always" --docker-volumes /var/run/docker.sock:/var/run/docker.sock'
 
 ### Kubernetes ###
 

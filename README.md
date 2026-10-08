@@ -9,6 +9,7 @@ This repository provides a **one-command setup** for a fully configured developm
 - **Git aliases** with the oh-my-zsh names (`gst`, `gco`, `gpsup`, `glog`…) — see [`config/.zsh_aliases`](config/.zsh_aliases)
 - **mise** — tool versions (replaces asdf) and per-directory environment variables (replaces direnv)
 - **Pre-configured tools**: kubectl, helm, k9s, krew + kubectl plugins (ctx, ns, cnpg, stern, neat…), opentofu, terragrunt, gcloud, scw, glab, gh, node…
+- **Docker rootless** — the real Docker CLI/compose/buildx, with a daemon running as your user (podman as an alternative)
 - **Dotfiles** symlinked from this repo: `git pull` is enough to update them
 
 ---
@@ -35,6 +36,9 @@ Options (environment variables):
 |---|---|---|
 | `DISTRO_BOOTSTRAP_DIR` | `~/distro-bootstrap` | where the repo is cloned in `curl \| bash` mode |
 | `ENABLE_BYOBU` | `0` | `1` = start byobu automatically at login |
+| `CONTAINER_RUNTIME` | `docker-rootless` | `podman` = install podman instead (`docker` is then an alias to it) |
+
+Example: `CONTAINER_RUNTIME=podman ./install.sh`
 
 The script is **idempotent**: re-run it any time. Existing dotfiles are kept as `<file>.bak-<date>` before being replaced by symlinks.
 
@@ -71,6 +75,17 @@ Run `mise trust` once in that directory. Existing `.tool-versions` files are sti
 
 Listed in [`config/krew-plugins.txt`](config/krew-plugins.txt); add a line and re-run `./install.sh`.
 `kubectl krew upgrade` updates them.
+
+### Containers
+
+By default Docker Engine is installed in [rootless mode](https://docs.docker.com/engine/security/rootless/):
+the daemon runs as your user (`systemctl --user status docker`), the system daemon is disabled and you are
+**not** added to the `docker` group (which is root-equivalent).
+
+- socket: `$XDG_RUNTIME_DIR/docker.sock`, exported as `DOCKER_HOST` by `~/.zshenv` and set as the `rootless` docker context
+- lingering is enabled, so `restart: unless-stopped` containers keep running without an open session
+- limits: no host ports below 1024 (unless `net.ipv4.ip_unprivileged_port_start` is lowered),
+  tools hard-coding `/var/run/docker.sock` need `DOCKER_HOST`
 
 ### Git
 

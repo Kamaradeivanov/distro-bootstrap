@@ -11,10 +11,13 @@ REPO_URL="https://github.com/Kamaradeivanov/distro-bootstrap.git"
 REPO_DIR="${DISTRO_BOOTSTRAP_DIR:-$HOME/distro-bootstrap}"
 WORKSPACE_DIR="$HOME/workspace"
 ENABLE_BYOBU="${ENABLE_BYOBU:-0}"   # 1 = launch byobu automatically at login
+CONTAINER_RUNTIME="${CONTAINER_RUNTIME:-docker-rootless}"   # docker-rootless | podman
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 
 [[ $EUID -ne 0 ]] || { echo "Run as your normal user (sudo is called when needed)." >&2; exit 1; }
+[[ $CONTAINER_RUNTIME == docker-rootless || $CONTAINER_RUNTIME == podman ]] \
+  || { echo "CONTAINER_RUNTIME must be docker-rootless or podman (got: $CONTAINER_RUNTIME)." >&2; exit 1; }
 
 # --- Get the repo (curl | bash mode) ---------------------------------------
 # When piped from curl there is no local copy: clone it and re-run from there.
@@ -38,7 +41,72 @@ log "Installing system packages"
 sudo apt-get update -qq
 sudo apt-get install -y \
   zsh git curl ca-certificates build-essential unzip \
-  fzf jq keychain byobu podman vim
+  fzf jq keychain byobu vim
+
+# --- Container runtime -----------------------------------------------------------
+if [[ $CONTAINER_RUNTIME == podman ]]; then
+  log "Installing podman"
+  sudo apt-get install -y podman
+else
+  # Docker Engine running as the current user: no root daemon, no docker group
+  # (being in the docker group is root-equivalent).
+  if [[ ! -f /etc/apt/sources.list.d/docker.sources ]]; then
+    log "Adding the Docker apt repository"
+    os_id="$(. /etc/os-release && echo "$ID")"
+    os_codename="$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")"
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL "https://download.docker.com/linux/$os_id/gpg" -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+    sudo tee /etc/apt/sources.list.d/docker.sources >/dev/null <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/$os_id
+Suites: $os_codename
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+    sudo apt-get update -qq
+  fi
+  log "Installing Docker (rootless)"
+  sudo apt-get install -y \
+    docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin \
+    docker-ce-rootless-extras uidmap dbus-user-session slirp4netns
+
+  # The package starts a rootful daemon: stop it, the rootless setup refuses to run next to it.
+  sudo systemctl disable --now docker.service docker.socket 2>/dev/null || true
+  sudo rm -f /var/run/docker.sock
+
+  # Ubuntu 24.04+ blocks unprivileged user namespaces unless an AppArmor profile allows them.
+  # Recent Ubuntu releases ship one for rootlesskit; add it on those that don't.
+  if [[ $(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns 2>/dev/null) == 1 ]] \
+     && ! grep -rqs '/usr/bin/rootlesskit' /etc/apparmor.d/; then
+    log "Allowing rootlesskit to create user namespaces (AppArmor)"
+    sudo tee /etc/apparmor.d/usr.bin.rootlesskit >/dev/null <<'EOF'
+abi <abi/4.0>,
+include <tunables/global>
+
+/usr/bin/rootlesskit flags=(unconfined) {
+  userns,
+
+  include if exists <local/usr.bin.rootlesskit>
+}
+EOF
+    sudo systemctl restart apparmor.service
+  fi
+
+  if systemctl --user show-environment >/dev/null 2>&1; then
+    if [[ ! -f $HOME/.config/systemd/user/docker.service ]]; then
+      log "Setting up the rootless Docker daemon"
+      dockerd-rootless-setuptool.sh install
+    fi
+    systemctl --user enable --now docker.service
+    # Keep the daemon (and restart: unless-stopped containers) running without an open session.
+    sudo loginctl enable-linger "$USER"
+    # For tools started outside zsh (IDE, desktop apps); zsh also exports DOCKER_HOST (.zshenv).
+    docker context use rootless >/dev/null
+  else
+    log "No systemd user session (WSL without systemd?): run dockerd-rootless-setuptool.sh install once it is enabled"
+  fi
+fi
 
 # --- antidote (zsh plugin manager) -------------------------------------------
 # Plugins listed in config/.zsh_plugins.txt are fetched on the first zsh start.
