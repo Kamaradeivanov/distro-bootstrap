@@ -4,8 +4,8 @@
 
 [tools]
 # Kubernetes
-kubectl = "1.37.1"            # keep within ±1 minor of the clusters you manage
-helm = "4.3.0"                # helm 4 is out: migrate deliberately
+kubectl = "1.37.1"             # keep within ±1 minor of the clusters you manage
+helm = "4.3.0"                 # helm 4 line: bump minors freely, majors deliberately
 k9s = "0.51.0"
 krew = "0.5.0"
 kubecolor = "0.8.0"
