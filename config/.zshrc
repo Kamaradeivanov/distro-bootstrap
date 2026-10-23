@@ -41,6 +41,7 @@ bindkey '^[[1;5D' backward-word               # Ctrl+Left
 bindkey '^[[H' beginning-of-line              # Home
 bindkey '^[[F' end-of-line                    # End
 bindkey '^[[3~' delete-char                   # Delete
+WORDCHARS=${WORDCHARS//\/}                    # word motions (and autosuggestion partial accept) stop at each / in paths
 
 ### Completions ###
 # Tool completions are generated once into a cache and refreshed when the tool binary changes.
